@@ -6,9 +6,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "sandbox": "npx ampx sandbox",
+    "sandbox:delete": "npx ampx sandbox --delete",
+    "export-pdf": "node scripts/md-to-pdf.js"
   },
   "dependencies": {
+    "@aws-amplify/backend": "^1.18.0",
+    "@aws-amplify/backend-cli": "^1.8.0",
+    "aws-amplify": "^6.15.8",
     "next": "16.0.3",
     "react": "19.2.0",
     "react-dom": "19.2.0"
@@ -20,6 +26,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.3",
+    "md-to-pdf": "^5.2.4",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
