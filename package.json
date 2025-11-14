@@ -1,7 +1,7 @@
 {
-  "name": "amplify-gen2-nextjs-todo",
-  "version": "0.1.0",
-  "private": true,
+  "name": "fullstack-todo-nextjs-amplify",
+  "version": "1.0.0",
+  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",

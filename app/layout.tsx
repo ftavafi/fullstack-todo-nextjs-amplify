@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Todo App with AWS Amplify Gen 2",
-  description: "A full-stack Todo app built with Next.js and AWS Amplify Gen 2",
+  title: "Full-Stack Todo App | Next.js & AWS Amplify",
+  description: "A modern, production-ready full-stack Todo application with Next.js 16, TypeScript, and AWS Amplify Gen 2",
 };
 
 export default function RootLayout({
