@@ -39,6 +39,7 @@ next-env.d.ts
 # Amplify
 amplify_outputs.json
 .amplify-hosting
+.amplify/
 .aws-amplify/
 
 # AWS
