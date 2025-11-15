@@ -72,12 +72,19 @@ Next.js Frontend (SSR) → AWS AppSync (GraphQL) → Amazon DynamoDB
    This creates AWS resources (Cognito, AppSync, DynamoDB) and generates `amplify_outputs.json`.
 
 5. **Start the development server**
-   ```bash
-   npm run dev
+```bash
+npm run dev
    ```
 
 6. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+7. **First time setup**
+   - Sign up with your email and password
+   - Check your email for a verification code
+   - Enter the verification code to confirm your account
+   - Sign in with your credentials
+   - Start creating todos!
 
 ## 📁 Project Structure
 

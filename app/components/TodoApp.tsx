@@ -3,7 +3,14 @@
 import { useState, useEffect } from 'react';
 import { generateClient } from 'aws-amplify/data';
 import type { Schema } from '../../amplify/data/resource';
-import { signIn, signOut, getCurrentUser, signUp } from 'aws-amplify/auth';
+import {
+  signIn,
+  signOut,
+  getCurrentUser,
+  signUp,
+  confirmSignUp,
+  resendSignUpCode,
+} from 'aws-amplify/auth';
 
 const client = generateClient<Schema>();
 
@@ -15,6 +22,9 @@ export default function TodoApp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [confirmationCode, setConfirmationCode] = useState('');
+  const [pendingEmail, setPendingEmail] = useState('');
   const [userEmail, setUserEmail] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -52,10 +62,33 @@ export default function TodoApp() {
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await signIn({ username: email, password });
-      await checkAuth();
+      const result = await signIn({ username: email, password });
+
+      // If sign-in completed, load user and todos
+      if (result?.isSignedIn) {
+        await checkAuth();
+        return;
+      }
+
+      // If sign-in did NOT complete, assume the account needs confirmation.
+      // Amplify often surfaces unconfirmed users via nextStep instead of throwing.
+      setPendingEmail(email);
+      setIsConfirming(true);
+      setIsSignUp(false);
+      alert('Please enter the verification code we emailed you to confirm your account.');
     } catch (error: any) {
-      alert(error.message || 'Sign in failed');
+      // Older behavior / network or other errors
+      if (
+        error?.name === 'UserNotConfirmedException' ||
+        error?.__type === 'UserNotConfirmedException'
+      ) {
+        setPendingEmail(email);
+        setIsConfirming(true);
+        setIsSignUp(false);
+        alert('Please enter the verification code we emailed you to confirm your account.');
+      } else {
+        alert(error.message || 'Sign in failed');
+      }
     }
   };
 
@@ -71,10 +104,38 @@ export default function TodoApp() {
           },
         },
       });
-      alert('Sign up successful! Please check your email to verify your account.');
+      setPendingEmail(email);
+      setIsConfirming(true);
       setIsSignUp(false);
+      alert('Sign up successful! Please check your email for the verification code.');
     } catch (error: any) {
       alert(error.message || 'Sign up failed');
+    }
+  };
+
+  const handleConfirmSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const usernameToConfirm = pendingEmail || email;
+      await confirmSignUp({
+        username: usernameToConfirm,
+        confirmationCode,
+      });
+      alert('Your email has been verified. You can now sign in.');
+      setIsConfirming(false);
+      setConfirmationCode('');
+    } catch (error: any) {
+      alert(error.message || 'Verification failed. Please check the code and try again.');
+    }
+  };
+
+  const handleResendCode = async () => {
+    try {
+      const usernameToResend = pendingEmail || email;
+      await resendSignUpCode({ username: usernameToResend });
+      alert('Verification code resent. Please check your email.');
+    } catch (error: any) {
+      alert(error.message || 'Failed to resend verification code.');
     }
   };
 
@@ -137,6 +198,60 @@ export default function TodoApp() {
   }
 
   if (!isAuthenticated) {
+    // Confirmation step: user has signed up and needs to enter verification code
+    if (isConfirming) {
+      return (
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
+            <h1 className="mb-2 text-center text-3xl font-bold text-gray-800">
+              Confirm Your Email
+            </h1>
+            <p className="mb-6 text-center text-gray-600">
+              We sent a verification code to <span className="font-semibold">{pendingEmail || email}</span>.
+              Enter it below to activate your account.
+            </p>
+
+            <form onSubmit={handleConfirmSignUp} className="space-y-4">
+              <input
+                type="text"
+                placeholder="Verification code"
+                value={confirmationCode}
+                onChange={(e) => setConfirmationCode(e.target.value)}
+                required
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-purple-500 focus:outline-none focus:ring-2 focus:ring-purple-200"
+              />
+              <button
+                type="submit"
+                className="w-full rounded-lg bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 font-semibold text-white transition hover:from-purple-600 hover:to-pink-600"
+              >
+                Verify Email
+              </button>
+            </form>
+
+            <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
+              <button
+                type="button"
+                onClick={handleResendCode}
+                className="font-semibold text-purple-600 hover:text-purple-800"
+              >
+                Resend code
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsConfirming(false);
+                  setIsSignUp(false);
+                }}
+                className="font-semibold text-gray-500 hover:text-gray-700"
+              >
+                Back to sign in
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 p-4">
         <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
@@ -289,11 +404,10 @@ export default function TodoApp() {
               {todos.map((todo) => (
                 <div
                   key={todo.id}
-                  className={`flex items-center justify-between rounded-lg border-2 p-4 transition ${
-                    todo.completed
-                      ? 'border-green-200 bg-green-50 opacity-75'
-                      : 'border-gray-200 bg-white hover:border-purple-300'
-                  }`}
+                  className={`flex items-center justify-between rounded-lg border-2 p-4 transition ${todo.completed
+                    ? 'border-green-200 bg-green-50 opacity-75'
+                    : 'border-gray-200 bg-white hover:border-purple-300'
+                    }`}
                 >
                   <div className="flex items-center gap-4 flex-1">
                     <input
@@ -304,11 +418,10 @@ export default function TodoApp() {
                     />
                     <div className="flex-1">
                       <h3
-                        className={`font-semibold ${
-                          todo.completed
-                            ? 'text-gray-500 line-through'
-                            : 'text-gray-800'
-                        }`}
+                        className={`font-semibold ${todo.completed
+                          ? 'text-gray-500 line-through'
+                          : 'text-gray-800'
+                          }`}
                       >
                         {todo.title}
                       </h3>
