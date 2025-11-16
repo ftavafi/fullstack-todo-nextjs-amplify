@@ -1,182 +1,87 @@
-# 📝 Full-Stack Todo Application with Next.js & AWS Amplify
+## Full-Stack Todo Application (Next.js + AWS Amplify Gen 2)
 
-A modern, production-ready full-stack Todo application demonstrating cloud-native development with Next.js 16, TypeScript, and AWS Amplify Gen 2.
+This project is a full-stack Todo application built with Next.js 16, TypeScript, Tailwind CSS, and AWS Amplify Gen 2. It demonstrates a modern, serverless architecture with authentication, a typed GraphQL API, and a responsive UI.
 
-[![Next.js](https://img.shields.io/badge/Next.js-16-black)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
-[![AWS Amplify](https://img.shields.io/badge/AWS-Amplify%20Gen%202-orange)](https://aws.amazon.com/amplify/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8)](https://tailwindcss.com/)
+## Demo
 
-## 🎥 Demo
-
-Watch demo video on Loom:  
+Watch the demo video on Loom:  
 [https://www.loom.com/share/4ab47f70488f4489a55bab3202872dde](https://www.loom.com/share/4ab47f70488f4489a55bab3202872dde)
 
-## ✨ Features
+## What is AWS Amplify Gen 2?
 
-- 🚀 **Server-Side Rendering** - Next.js 16 with App Router for optimal performance
-- 🔐 **User Authentication** - Secure email/password authentication with AWS Cognito
-- 💾 **Real-time Data Sync** - GraphQL API with AWS AppSync for seamless data updates
-- 🗄️ **Serverless Database** - Amazon DynamoDB for scalable, cost-effective storage
-- 🎨 **Modern UI** - Beautiful, responsive design with Tailwind CSS
-- 📱 **Type-Safe** - End-to-end TypeScript for better developer experience
-- ☁️ **Cloud-Native** - Fully serverless architecture on AWS
+AWS Amplify Gen 2 is an “infrastructure-as-code” approach to building backends with TypeScript. Instead of clicking through the AWS console, you define your backend in code (models, auth, APIs) using the `@aws-amplify/backend` library. Amplify then synthesizes and deploys a real AWS stack (Cognito for auth, AppSync for GraphQL, DynamoDB for data) from that definition.
 
-## 🏗️ Architecture
+In this project:
+- `amplify/auth/resource.ts` defines the authentication flow (email/password with Cognito).
+- `amplify/data/resource.ts` defines the `Todo` model and authorization rules.
+- `amplify/backend.ts` wires these into a single backend.
+- `npm run sandbox` deploys this backend to your AWS account and generates `amplify_outputs.json`, which the Next.js app uses to connect to the cloud resources.
 
-```
-Next.js Frontend (SSR) → AWS AppSync (GraphQL) → Amazon DynamoDB
-                      ↓
-                  AWS Cognito (Auth)
-```
+## Features
 
-### Technology Stack
+- Next.js 16 with App Router and server-side rendering  
+- Email/password authentication with AWS Cognito, including email verification  
+- CRUD operations for todos backed by AWS AppSync (GraphQL) and DynamoDB  
+- Owner-based authorization (each user only sees their own todos)  
+- Responsive UI styled with Tailwind CSS  
+- End-to-end TypeScript across frontend and backend definitions  
 
-**Frontend:**
-- Next.js 16 with App Router
-- React 19 with Server Components
-- TypeScript
-- Tailwind CSS
+## Architecture
 
-**Backend:**
-- AWS Amplify Gen 2 (Backend-as-Code)
-- AWS Cognito (Authentication)
-- AWS AppSync (GraphQL API)
-- Amazon DynamoDB (Database)
+- Frontend: Next.js 16, React, TypeScript, Tailwind CSS  
+- Backend (via AWS Amplify Gen 2): Cognito (authentication), AppSync (GraphQL API), DynamoDB (data store)  
 
-## 🚀 Getting Started
+The Todo model is defined in `amplify/data/resource.ts` and used by Amplify to generate the GraphQL schema and DynamoDB table.
+
+## Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ and npm
-- AWS Account (for backend deployment)
-- AWS CLI configured with credentials
+- Node.js 18+ and npm  
+- AWS account and AWS CLI configured (`aws configure`)  
 
-### Installation
+### Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/ftavafi/fullstack-todo-nextjs-amplify.git
-   cd fullstack-todo-nextjs-amplify
-   ```
+```bash
+git clone https://github.com/ftavafi/fullstack-todo-nextjs-amplify.git
+cd fullstack-todo-nextjs-amplify
+npm install
+```
 
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
+Deploy the backend (one-time per environment):
 
-3. **Configure AWS credentials**
-   ```bash
-   aws configure
-   ```
+```bash
+npm run sandbox
+```
 
-4. **Deploy the backend** (when ready)
-   ```bash
-   npm run sandbox
-   ```
-   This creates AWS resources (Cognito, AppSync, DynamoDB) and generates `amplify_outputs.json`.
+Start the development server:
 
-5. **Start the development server**
 ```bash
 npm run dev
-   ```
-
-6. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
-
-7. **First time setup**
-   - Sign up with your email and password
-   - Check your email for a verification code
-   - Enter the verification code to confirm your account
-   - Sign in with your credentials
-   - Start creating todos!
-
-## 📁 Project Structure
-
-```
-├── app/
-│   ├── components/
-│   │   ├── AmplifyProvider.tsx    # Amplify configuration
-│   │   └── TodoApp.tsx            # Main Todo application
-│   ├── layout.tsx                 # Root layout
-│   ├── page.tsx                   # Home page
-│   └── globals.css                # Global styles
-├── amplify/
-│   ├── backend.ts                 # Backend configuration
-│   ├── auth/
-│   │   └── resource.ts           # Authentication setup
-│   └── data/
-│       └── resource.ts           # Data model (Todo schema)
-├── scripts/
-│   ├── md-to-pdf.js              # PDF export utility
-│   └── pdf-styles.css            # PDF styling
-└── package.json
 ```
 
-## 🔑 Key Concepts
+Open the application at `http://localhost:3000`.
 
-### Server Components vs Client Components
+### First-time user flow
 
-- **Server Components** (default): Render on the server for better performance
-- **Client Components** (`'use client'`): Interactive components with hooks and events
+1. Sign up with your email and password.  
+2. Check your email for the verification code.  
+3. Enter the verification code in the app to confirm your account.  
+4. Sign in with your credentials.  
+5. Create, complete, and delete todos.  
 
-### AWS Amplify Gen 2
+## Project structure (high level)
 
-- **Backend-as-Code**: Define infrastructure in TypeScript
-- **Auto-generated APIs**: GraphQL API created from schema
-- **Built-in Security**: Authorization rules defined in code
-- **Serverless**: No server management required
+- `app/` – Next.js App Router (layout, page, and UI components)  
+- `app/components/TodoApp.tsx` – main application logic and UI  
+- `amplify/` – backend definition (auth and data models)  
+- `amplify_outputs.json` – generated configuration used by the frontend  
 
-### Data Model
+## Author
 
-```typescript
-Todo {
-  title: string (required)
-  description: string (optional)
-  completed: boolean (default: false)
-  createdAt: datetime
-}
-```
+Tara Tavafi  
+GitHub: [@ftavafi](https://github.com/ftavafi)
 
-With owner-based authorization - users can only access their own todos.
+This project is open source under the [MIT License](LICENSE).
 
-## 🎯 Project Highlights
 
-- ✅ Full-stack TypeScript application
-- ✅ Server-side rendering for better SEO and performance
-- ✅ Modern React patterns (Server Components, App Router)
-- ✅ Cloud-native serverless architecture
-- ✅ Production-ready code structure
-- ✅ Responsive, accessible UI
-
-## 🔒 Security
-
-- Owner-based authorization on all data operations
-- JWT-based authentication with AWS Cognito
-- Secure password policies enforced
-- All sensitive files excluded from Git (`.gitignore`)
-
-## 📚 Learn More
-
-- [Next.js Documentation](https://nextjs.org/docs)
-- [AWS Amplify Gen 2 Docs](https://docs.amplify.aws/)
-- [TypeScript Documentation](https://www.typescriptlang.org/)
-- [Tailwind CSS Docs](https://tailwindcss.com/docs)
-
-## 🤝 Contributing
-
-This is a portfolio project. Feel free to fork and use as a reference for your own projects!
-
-## 📝 License
-
-This project is open source and available under the [MIT License](LICENSE).
-
-## 👤 Author
-
-**Tara Tavafi**
-- GitHub: [@ftavafi](https://github.com/ftavafi)
-- Portfolio: [Your Portfolio URL]
-
----
-
-**Built with ❤️ using Next.js and AWS Amplify Gen 2**
