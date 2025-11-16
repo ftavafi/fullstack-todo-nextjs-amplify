@@ -7,9 +7,13 @@ This project is a full-stack Todo application built with Next.js 16, TypeScript,
 Watch the demo video on Loom:  
 [https://www.loom.com/share/4ab47f70488f4489a55bab3202872dde](https://www.loom.com/share/4ab47f70488f4489a55bab3202872dde)
 
-## What is AWS Amplify Gen 2?
+## Why we decided to use AWS Amplify Gen 2
 
-AWS Amplify Gen 2 is an “infrastructure-as-code” approach to building backends with TypeScript. Instead of clicking through the AWS console, you define your backend in code (models, auth, APIs) using the `@aws-amplify/backend` library. Amplify then synthesizes and deploys a real AWS stack (Cognito for auth, AppSync for GraphQL, DynamoDB for data) from that definition.
+For this project, AWS Amplify Gen 2 was chosen to keep the backend simple, type-safe, and aligned with the frontend stack:
+
+- **Backend defined in TypeScript:** The entire backend (auth, data models, API) is defined in code using the `@aws-amplify/backend` library, which fits naturally with a TypeScript/Next.js application.
+- **Serverless and managed:** Amplify synthesizes and deploys a real AWS stack (Cognito for auth, AppSync for GraphQL, DynamoDB for data), so there is no need to manage servers, networking, or manual CloudFormation templates.
+- **Tight integration with the frontend:** The generated `amplify_outputs.json` is consumed directly by the Next.js app, and the typed client from `aws-amplify/data` allows us to call `client.models.Todo.*` with full TypeScript support.
 
 In this project:
 - `amplify/auth/resource.ts` defines the authentication flow (email/password with Cognito).
