@@ -1,50 +1,46 @@
 ## Full-Stack Todo Application (Next.js + AWS Amplify Gen 2)
 
-This project is a full-stack Todo application built with Next.js 16, TypeScript, Tailwind CSS, and AWS Amplify Gen 2. It demonstrates a modern, serverless architecture with authentication, a typed GraphQL API, and a responsive UI.
+This repository contains a production-style full-stack Todo application built with Next.js 16, TypeScript, Tailwind CSS, and AWS Amplify Gen 2. The application implements authenticated, multi-user task management on a fully serverless backend.
 
 ## Demo
 
 Watch the demo video on Loom:  
 [https://www.loom.com/share/4ab47f70488f4489a55bab3202872dde](https://www.loom.com/share/4ab47f70488f4489a55bab3202872dde)
 
-## Why we decided to use AWS Amplify Gen 2
-
-For this project, AWS Amplify Gen 2 was chosen to keep the backend simple, type-safe, and aligned with the frontend stack:
-
-- **Backend defined in TypeScript:** The entire backend (auth, data models, API) is defined in code using the `@aws-amplify/backend` library, which fits naturally with a TypeScript/Next.js application.
-- **Serverless and managed:** Amplify synthesizes and deploys a real AWS stack (Cognito for auth, AppSync for GraphQL, DynamoDB for data), so there is no need to manage servers, networking, or manual CloudFormation templates.
-- **Tight integration with the frontend:** The generated `amplify_outputs.json` is consumed directly by the Next.js app, and the typed client from `aws-amplify/data` allows us to call `client.models.Todo.*` with full TypeScript support.
-
-In this project:
-- `amplify/auth/resource.ts` defines the authentication flow (email/password with Cognito).
-- `amplify/data/resource.ts` defines the `Todo` model and authorization rules.
-- `amplify/backend.ts` wires these into a single backend.
-- `npm run sandbox` deploys this backend to your AWS account and generates `amplify_outputs.json`, which the Next.js app uses to connect to the cloud resources.
-
 ## Features
 
 - Next.js 16 with App Router and server-side rendering  
-- Email/password authentication with AWS Cognito, including email verification  
-- CRUD operations for todos backed by AWS AppSync (GraphQL) and DynamoDB  
-- Owner-based authorization (each user only sees their own todos)  
-- Responsive UI styled with Tailwind CSS  
-- End-to-end TypeScript across frontend and backend definitions  
+- Email/password authentication with AWS Cognito and email verification  
+- Create, read, update, and delete todos backed by AWS AppSync (GraphQL) and DynamoDB  
+- Owner-based authorization so each user only sees their own data  
+- Responsive UI implemented with Tailwind CSS  
+- End-to-end TypeScript, including typed data access via `aws-amplify/data`
+
+## Why AWS Amplify Gen 2
+
+AWS Amplify Gen 2 is used to define the backend entirely in TypeScript instead of configuring services manually in the AWS console. The backend is expressed in a small set of source files:
+
+- `amplify/auth/resource.ts` defines the authentication configuration (Cognito with email/password).  
+- `amplify/data/resource.ts` defines the `Todo` data model and its authorization rules.  
+- `amplify/backend.ts` composes the backend and is used by Amplify to synthesize the AWS stack.  
+
+Running `npm run sandbox` uses Amplify Gen 2 to provision Cognito, AppSync, and DynamoDB in your AWS account and generates `amplify_outputs.json`, which the Next.js app consumes to talk to the deployed backend.
 
 ## Architecture
 
 - Frontend: Next.js 16, React, TypeScript, Tailwind CSS  
-- Backend (via AWS Amplify Gen 2): Cognito (authentication), AppSync (GraphQL API), DynamoDB (data store)  
+- Backend: AWS Amplify Gen 2 (Cognito, AppSync, DynamoDB)  
 
-The Todo model is defined in `amplify/data/resource.ts` and used by Amplify to generate the GraphQL schema and DynamoDB table.
+The frontend interacts with the backend via the generated client from `aws-amplify/data` (for example, `client.models.Todo.list`, `create`, `update`, `delete`).
 
 ## Getting Started
 
 ### Prerequisites
 
 - Node.js 18+ and npm  
-- AWS account and AWS CLI configured (`aws configure`)  
+- AWS account and AWS CLI configured (`aws configure`)
 
-### Setup
+### Installation and local run
 
 ```bash
 git clone https://github.com/ftavafi/fullstack-todo-nextjs-amplify.git
@@ -72,7 +68,7 @@ Open the application at `http://localhost:3000`.
 2. Check your email for the verification code.  
 3. Enter the verification code in the app to confirm your account.  
 4. Sign in with your credentials.  
-5. Create, complete, and delete todos.  
+5. Create, complete, and delete todos.
 
 ## Project structure (high level)
 
