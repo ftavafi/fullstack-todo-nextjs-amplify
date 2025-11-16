@@ -70,12 +70,31 @@ Open the application at `http://localhost:3000`.
 4. Sign in with your credentials.  
 5. Create, complete, and delete todos.
 
-## Project structure (high level)
+## Project structure
 
-- `app/` – Next.js App Router (layout, page, and UI components)  
-- `app/components/TodoApp.tsx` – main application logic and UI  
-- `amplify/` – backend definition (auth and data models)  
-- `amplify_outputs.json` – generated configuration used by the frontend  
+```text
+.
+├── app/
+│   ├── layout.tsx                 # Root layout
+│   ├── page.tsx                   # Home page
+│   ├── globals.css                # Global styles
+│   └── components/
+│       ├── AmplifyProvider.tsx    # Amplify configuration wrapper
+│       └── TodoApp.tsx            # Main Todo application UI and logic
+├── amplify/
+│   ├── backend.ts                 # Amplify Gen 2 backend composition
+│   ├── auth/
+│   │   └── resource.ts            # Cognito auth configuration
+│   └── data/
+│       └── resource.ts            # Todo data model and authorization rules
+├── scripts/
+│   ├── md-to-pdf.js               # Markdown-to-PDF export utility
+│   └── pdf-styles.css             # Styles for exported PDFs
+├── public/                        # Static assets (if any)
+├── amplify_outputs.json           # Generated Amplify configuration
+├── package.json                   # Dependencies and scripts
+└── tsconfig.json                  # TypeScript configuration
+```
 
 ## Author
 
@@ -83,5 +102,3 @@ Tara Tavafi
 GitHub: [@ftavafi](https://github.com/ftavafi)
 
 This project is open source under the [MIT License](LICENSE).
-
-
