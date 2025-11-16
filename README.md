@@ -7,6 +7,11 @@ A modern, production-ready full-stack Todo application demonstrating cloud-nativ
 [![AWS Amplify](https://img.shields.io/badge/AWS-Amplify%20Gen%202-orange)](https://aws.amazon.com/amplify/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38bdf8)](https://tailwindcss.com/)
 
+## 🎥 Demo
+
+Watch demo video on Loom:  
+[https://www.loom.com/share/4ab47f70488f4489a55bab3202872dde](https://www.loom.com/share/4ab47f70488f4489a55bab3202872dde)
+
 ## ✨ Features
 
 - 🚀 **Server-Side Rendering** - Next.js 16 with App Router for optimal performance
